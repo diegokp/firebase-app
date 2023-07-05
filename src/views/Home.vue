@@ -1,14 +1,14 @@
 <template>
     <div>
         <h1>Home</h1>
-        <button @click="userStore.logoutUser">Log-out</button>
+        <p>{{ userStore.userData?.email }}</p>
     </div>
 </template>
 
 
 <script setup>
-import { useUserStore } from "../stores/user";
+    import { useUserStore } from "../stores/user";
 
-const userStore = useUserStore()
+    const userStore = useUserStore()
 
 </script>

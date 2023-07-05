@@ -6,7 +6,7 @@
         <form @submit.prevent="handleSubmit">
             <input type="email" placeholder="email" v-model.trim="email">
             <input type="password" placeholder="contraseña" v-model.trim="password">
-            <button type="submit">Registrar</button>
+            <button type="submit" :disabled="userStore.loadingUser">Registrar</button>
         </form>
 
     </div>
@@ -34,4 +34,16 @@
     }
 
 </script>
+
+
+<style>
+    form{
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    form input{
+        height: 25px;
+    }
+</style>
 
