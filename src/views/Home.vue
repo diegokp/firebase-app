@@ -8,7 +8,10 @@
 
 <script setup>
     import { useUserStore } from "../stores/user";
+    import { useDatabaseStore } from "../stores/database";
+    const userStore = useUserStore();
+    const databaseStore = useDatabaseStore();
 
-    const userStore = useUserStore()
+    databaseStore.getUrls() 
 
 </script>
