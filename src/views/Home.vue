@@ -2,6 +2,12 @@
     <div>
         <h1>Home</h1>
         <p>{{ userStore.userData?.email }}</p>
+        <p v-if="databaseStore.loadingDoc">Loadind docs...</p>
+        <ul v-else>
+            <li v-for="item of databaseStore.documents" :key='item.id'>
+                {{item.name}} <br> {{ item.id }} <br> {{ item.short }}
+            </li>
+        </ul>
     </div>
 </template>
 
