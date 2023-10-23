@@ -23,6 +23,7 @@ const route = useRoute();
 
 const handleSubmit = () => {
       console.log('editar')
+      databaseStore.updateUrl(route.params.id, url.value)
     }
 
 const url = ref('')

@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where, addDoc, deleteDoc, doc, getDoc } from "firebase/firestore/lite";
+import { collection, getDocs, query, where, addDoc, deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore/lite";
 import { defineStore } from "pinia";
 import { db } from "../firebaseConfig";
 import { auth } from "../firebaseConfig";
@@ -57,7 +57,6 @@ export const useDatabaseStore = defineStore('database',{
         try {
             const docRef = doc(db,'url', id);
             const docSnap = await getDoc(docRef);
-            return docSnap.data().name
 
             if(!docSnap.exists()){
                 throw new Error('No existe doc');
@@ -67,10 +66,38 @@ export const useDatabaseStore = defineStore('database',{
                 throw new Error('no es posible editar el doc')
             }
 
+            return docSnap.data().name;
+
         } catch (error) {
             console.log(error.message)
         } finally{
  
+        }
+       },
+       async updateUrl (id, name){
+        try {
+            const docRef = doc(db,'url', id);
+            const docSnap = await getDoc(docRef)
+
+            if(!docSnap.exists()){
+                throw new Error('No existe doc');
+            }
+
+            if(docSnap.data().user !== auth.currentUser.uid){
+                throw new Error('no es posible acceder a doc')
+            }
+
+            await updateDoc(docRef,{
+                name: name
+            })
+            this.documents = this.documents.map(item => 
+                item.id === id ? ({...item, name: name}) : item
+            );
+            router.push('/');
+        } catch (error) {
+            console.log(error.mesagge)
+        } finally {
+
         }
        },
        async deleteUrl(id){
@@ -87,7 +114,9 @@ export const useDatabaseStore = defineStore('database',{
             }
 
             await deleteDoc(docRef);
-            this.documents = this.documents.filter(item => item.id !== id)
+            this.documents = this.documents.filter(
+                (item) => item.id !== id
+            );
 
         } catch (error) {
             console.log(error.message);
