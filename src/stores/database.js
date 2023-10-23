@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where } from "firebase/firestore/lite";
+import { collection, getDocs, query, where, addDoc } from "firebase/firestore/lite";
 import { defineStore } from "pinia";
 import { db } from "../firebaseConfig";
 import { auth } from "../firebaseConfig";
@@ -32,5 +32,18 @@ export const useDatabaseStore = defineStore('database',{
             this.loadingDoc = false
         }
        },
+       async addUrl(name) {
+        try {
+
+            const docRef = await addDoc(collection(db, "url"), {
+                // name: "Tokyo",
+                // country: "Japan"
+              });
+        } catch (error) {
+             console.log(error)
+        }finally{
+
+        }
+       }
     },
 });
