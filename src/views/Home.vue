@@ -11,7 +11,9 @@
         <p v-if="databaseStore.loadingDoc">Loadind docs...</p>
         <ul v-else>
             <li v-for="item of databaseStore.documents" :key='item.id'>
-                {{item.name}} <br> {{ item.id }} <br> {{ item.short }}
+                {{item.name}} <br> {{ item.id }} <br> {{ item.short }} <br> 
+                <button @click="databaseStore.deleteUrl(item.id)">Del</button>
+                <button @click="router.push(`/editar/${item.id}`)">Edit</button>
             </li>
         </ul>
     </div>
@@ -22,15 +24,19 @@
     import { useUserStore } from "../stores/user";
     import { useDatabaseStore } from "../stores/database";
     import { ref } from "vue";
+    import { useRouter } from "vue-router";
 
     const userStore = useUserStore();
     const databaseStore = useDatabaseStore();
-    
+    const router = useRouter()
+
     databaseStore.getUrls() 
 
     const url = ref('')
 
     const handleSubmit = () => {
+        // validaciones de es url...
+        databaseStore.addUrl(url.value)
       
     }
 

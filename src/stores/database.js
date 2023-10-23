@@ -1,7 +1,9 @@
-import { collection, getDocs, query, where, addDoc } from "firebase/firestore/lite";
+import { collection, getDocs, query, where, addDoc, deleteDoc, doc, getDoc } from "firebase/firestore/lite";
 import { defineStore } from "pinia";
 import { db } from "../firebaseConfig";
 import { auth } from "../firebaseConfig";
+import { nanoid } from "nanoid";
+import router from "../router";
 
 
 export const useDatabaseStore = defineStore('database',{
@@ -19,7 +21,7 @@ export const useDatabaseStore = defineStore('database',{
                 );
                 const querySnapshot = await getDocs(q)
                 querySnapshot.forEach((doc) => {
-                console.log(doc.id, doc.data())
+                // console.log(doc.id, doc.data())
                 this.documents.push({
                     id: doc.id,
                     ...doc.data()
@@ -34,16 +36,64 @@ export const useDatabaseStore = defineStore('database',{
        },
        async addUrl(name) {
         try {
-
-            const docRef = await addDoc(collection(db, "url"), {
-                // name: "Tokyo",
-                // country: "Japan"
-              });
+            const objetoDoc = {
+                name: name,
+                short: nanoid(6),
+                user: auth.currentUser.uid,
+            };
+            const docRef = await addDoc(collection(db, "url"), objetoDoc);
+            // console.log(docRef);
+            this.documents.push({
+                ...objetoDoc,
+                id: docRef.id,
+            })
         } catch (error) {
-             console.log(error)
+             console.log(error);
         }finally{
 
         }
-       }
+       },
+       async leerUrl (id) {
+        try {
+            const docRef = doc(db,'url', id);
+            const docSnap = await getDoc(docRef);
+            return docSnap.data().name
+
+            if(!docSnap.exists()){
+                throw new Error('No existe doc');
+            }
+
+            if(docSnap.data().user !== auth.currentUser.uid){
+                throw new Error('no es posible editar el doc')
+            }
+
+        } catch (error) {
+            console.log(error.message)
+        } finally{
+ 
+        }
+       },
+       async deleteUrl(id){
+        try {
+            const docRef = doc(db,'url', id);
+
+            const docSnap = await getDoc(docRef)
+            if(!docSnap.exists()){
+                throw new Error('No existe doc');
+            }
+
+            if(docSnap.data().user !== auth.currentUser.uid){
+                throw new Error('no es posible borrar el doc')
+            }
+
+            await deleteDoc(docRef);
+            this.documents = this.documents.filter(item => item.id !== id)
+
+        } catch (error) {
+            console.log(error.message);
+        } finally{
+
+        }
+       },
     },
-});
+}); 
